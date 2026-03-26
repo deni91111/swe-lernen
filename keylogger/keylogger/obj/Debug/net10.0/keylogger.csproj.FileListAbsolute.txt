@@ -1,0 +1,4 @@
+C:\Users\deni\OneDrive - Georg-Simon-Ohm Berufskolleg\123MeinPC\SWE\keylogger\keylogger\obj\Debug\net10.0\keylogger.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\deni\OneDrive - Georg-Simon-Ohm Berufskolleg\123MeinPC\SWE\keylogger\keylogger\obj\Debug\net10.0\keylogger.AssemblyInfoInputs.cache
+C:\Users\deni\OneDrive - Georg-Simon-Ohm Berufskolleg\123MeinPC\SWE\keylogger\keylogger\obj\Debug\net10.0\keylogger.AssemblyInfo.cs
+C:\Users\deni\OneDrive - Georg-Simon-Ohm Berufskolleg\123MeinPC\SWE\keylogger\keylogger\obj\Debug\net10.0\keylogger.csproj.CoreCompileInputs.cache

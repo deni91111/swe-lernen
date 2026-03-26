@@ -1,0 +1,28 @@
+C:\Users\deni\OneDrive - Georg-Simon-Ohm Berufskolleg\123MeinPC\SWE\keylogger\keylogger\bin\Debug\net10.0-windows\keylogger.exe
+C:\Users\deni\OneDrive - Georg-Simon-Ohm Berufskolleg\123MeinPC\SWE\keylogger\keylogger\bin\Debug\net10.0-windows\keylogger.deps.json
+C:\Users\deni\OneDrive - Georg-Simon-Ohm Berufskolleg\123MeinPC\SWE\keylogger\keylogger\bin\Debug\net10.0-windows\keylogger.runtimeconfig.json
+C:\Users\deni\OneDrive - Georg-Simon-Ohm Berufskolleg\123MeinPC\SWE\keylogger\keylogger\bin\Debug\net10.0-windows\keylogger.dll
+C:\Users\deni\OneDrive - Georg-Simon-Ohm Berufskolleg\123MeinPC\SWE\keylogger\keylogger\bin\Debug\net10.0-windows\keylogger.pdb
+C:\Users\deni\OneDrive - Georg-Simon-Ohm Berufskolleg\123MeinPC\SWE\keylogger\keylogger\obj\Debug\net10.0-windows\keylogger.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\deni\OneDrive - Georg-Simon-Ohm Berufskolleg\123MeinPC\SWE\keylogger\keylogger\obj\Debug\net10.0-windows\keylogger.AssemblyInfoInputs.cache
+C:\Users\deni\OneDrive - Georg-Simon-Ohm Berufskolleg\123MeinPC\SWE\keylogger\keylogger\obj\Debug\net10.0-windows\keylogger.AssemblyInfo.cs
+C:\Users\deni\OneDrive - Georg-Simon-Ohm Berufskolleg\123MeinPC\SWE\keylogger\keylogger\obj\Debug\net10.0-windows\keylogger.csproj.CoreCompileInputs.cache
+C:\Users\deni\OneDrive - Georg-Simon-Ohm Berufskolleg\123MeinPC\SWE\keylogger\keylogger\obj\Debug\net10.0-windows\keylogger.dll
+C:\Users\deni\OneDrive - Georg-Simon-Ohm Berufskolleg\123MeinPC\SWE\keylogger\keylogger\obj\Debug\net10.0-windows\refint\keylogger.dll
+C:\Users\deni\OneDrive - Georg-Simon-Ohm Berufskolleg\123MeinPC\SWE\keylogger\keylogger\obj\Debug\net10.0-windows\keylogger.pdb
+C:\Users\deni\OneDrive - Georg-Simon-Ohm Berufskolleg\123MeinPC\SWE\keylogger\keylogger\obj\Debug\net10.0-windows\keylogger.genruntimeconfig.cache
+C:\Users\deni\OneDrive - Georg-Simon-Ohm Berufskolleg\123MeinPC\SWE\keylogger\keylogger\obj\Debug\net10.0-windows\ref\keylogger.dll
+C:\Users\deni\Desktop\keylogger\keylogger\bin\Debug\net10.0-windows\keylogger.exe
+C:\Users\deni\Desktop\keylogger\keylogger\bin\Debug\net10.0-windows\keylogger.deps.json
+C:\Users\deni\Desktop\keylogger\keylogger\bin\Debug\net10.0-windows\keylogger.runtimeconfig.json
+C:\Users\deni\Desktop\keylogger\keylogger\bin\Debug\net10.0-windows\keylogger.dll
+C:\Users\deni\Desktop\keylogger\keylogger\bin\Debug\net10.0-windows\keylogger.pdb
+C:\Users\deni\Desktop\keylogger\keylogger\obj\Debug\net10.0-windows\keylogger.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\deni\Desktop\keylogger\keylogger\obj\Debug\net10.0-windows\keylogger.AssemblyInfoInputs.cache
+C:\Users\deni\Desktop\keylogger\keylogger\obj\Debug\net10.0-windows\keylogger.AssemblyInfo.cs
+C:\Users\deni\Desktop\keylogger\keylogger\obj\Debug\net10.0-windows\keylogger.csproj.CoreCompileInputs.cache
+C:\Users\deni\Desktop\keylogger\keylogger\obj\Debug\net10.0-windows\keylogger.dll
+C:\Users\deni\Desktop\keylogger\keylogger\obj\Debug\net10.0-windows\refint\keylogger.dll
+C:\Users\deni\Desktop\keylogger\keylogger\obj\Debug\net10.0-windows\keylogger.pdb
+C:\Users\deni\Desktop\keylogger\keylogger\obj\Debug\net10.0-windows\keylogger.genruntimeconfig.cache
+C:\Users\deni\Desktop\keylogger\keylogger\obj\Debug\net10.0-windows\ref\keylogger.dll
